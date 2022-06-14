@@ -8,13 +8,31 @@ const { json } = require('express/lib/response');
 //Metodo para leer usuarios
 const getUsuarios = async( req, res) =>{
 
-    const usuarios = await Usuario.find({},'nombre email role google');//filtro los campos que quiero traer
+    const desde = Number(req.query.desde) || 0;
+    
+
+   /*  const usuarios = await Usuario
+                            .find({},'nombre email role google')//filtro los campos que quiero traer
+                            .skip(desde)
+                            .limit( 5 )
+
+    const total = await Usuario.count(); */
+   const [ usuarios, total ] = await  Promise.all([
+        Usuario
+            .find({},'nombre email role google img')//filtro los campos que quiero traer
+            .skip(desde)
+            .limit( 5 ),
+
+            Usuario.count()
+
+    ]);
+
 
     //json entregado al get
     res.json({
         ok:true,
         usuarios,
-        uid: req.uid
+        total
     });
 }
 
