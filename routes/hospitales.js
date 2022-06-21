@@ -21,12 +21,17 @@ router.post('/',
 );
 
 router.put('/:id',
-    [],
+    [
+
+        validarJWT,
+        check('nombre', 'El nombre del Hospital es obligatorio').not().isEmpty(),
+        validarCampos
+    ],
     actualizarHospitales
     );
 
 router.delete('/:id',
-   
+    validarJWT,
     borrarHospitales
 );
 

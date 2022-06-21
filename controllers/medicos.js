@@ -44,24 +44,83 @@ const crearMedicos = async( req, res = response ) =>{
 
 }
 
-const actualizarMedicos = (req, res = response) => {
-    res.json({
-        ok: true,
-        msg: 'actualizarMedicos'
-    });
+const actualizarMedicos = async(req, res = response) => {
+
+    const id = req.params.id;
+    const uid = req.uid;
+   
+
+
+    try {
+
+        const medicos = await Medicos.findById( id );
+        //console.log(medicos);
+        if(!medicos){
+
+            return res.status(404).json({
+                ok: false,
+                msg: 'Medico no encontrado'
+            });
+        }
+
+        const cambiosMedicos = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const medicoActualizado = await Medicos.findByIdAndUpdate(id, cambiosMedicos, { new: true});
+
+        res.json({
+            ok: true,           
+            medico : medicoActualizado
+        });
+
+
+    } catch(error){
+
+            console.log(error);
+            res.status(500).json({
+                ok: false,
+                msg: 'No es posible actualizar medicos'
+                        });
+
+    }
+    
+}
+
+const borrarMedicos = async( req, res = response ) => {
+
+    const id = req.params.id;
+    
+    try {
+
+        const medico = await Medicos.findById( id );
+        if(!medico){
+            return res.status(404).json({
+                ok: false,
+                msg: 'Medico no encontrado'
+                
+            });
+        }
+
+        await Medicos.findByIdAndDelete( id );
+        res.json({
+            ok: true,           
+           msg: 'Medico Eliminado'
+        });
+
+    } catch(error){
+
+            console.log(error);
+            res.status(500).json({
+                ok: false,
+                msg: 'No es posible borrar , llame al administrado'
+            });
+    
 
 }
 
-const borrarMedicos = ( req, res = response ) => {
-    res.json({
-        ok: true,
-        msg: 'borrarMedicos'
-    });
-
-
 }
-
-
 
 
 module.exports = {
